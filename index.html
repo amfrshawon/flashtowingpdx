@@ -1,0 +1,1395 @@
+Here is the updated single-file HTML code. I have added the Junk Car Value Estimator section right above the footer.
+
+It includes the dropdowns/inputs you requested, dynamically populates the years (1990–2024), and uses the Gemini API's streamGenerateContent endpoint with Server-Sent Events (SSE) to stream the response live onto the page.
+
+Remember to replace [PASTE YOUR KEY HERE] near the bottom of the script with your actual Gemini API key.
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash Towing PDX | 24/7 Towing in Portland, OR</title>
+    <meta name="description" content="Portland's Fastest Towing Service. 24/7 Local & Long-Distance Towing, Roadside Assistance, and Heavy-Duty Recovery. Call (971) 326-8952.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Flash Towing PDX",
+      "image": "https://via.placeholder.com/600x400/121212/ffb300?text=Flash+Towing+PDX",
+      "@id": "",
+      "url": "https://www.flashtowingpdx.com",
+      "telephone": "+1-971-326-8952",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "16531 NE Sandy Blvd Suite E",
+        "addressLocality": "Portland",
+        "addressRegion": "OR",
+        "postalCode": "97230",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 45.5563,
+        "longitude": -122.4965
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek":[
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "00:00",
+        "closes": "23:59"
+      }
+    }
+    </script>
+
+    <style>
+        /* CSS Variables */
+        :root {
+            --bg-color: #0a0a0a;
+            --surface-color: #1a1a1a;
+            --surface-light: #2a2a2a;
+            --primary-color: #ffb300;
+            --primary-hover: #e09e00;
+            --text-main: #ffffff;
+            --text-muted: #b3b3b3;
+            --font-heading: 'Barlow Condensed', sans-serif;
+            --font-body: 'Nunito Sans', sans-serif;
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        a { text-decoration: none; }
+        ul { list-style: none; }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-padding { padding: 80px 0; }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: var(--primary-color);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(255, 179, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 4px 20px rgba(255, 179, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: #000;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid #222;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i { color: var(--primary-color); }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .phone-number {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .phone-number i {
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1542223616-90e63edb2dce?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+            padding-top: 80px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero-title span { color: var(--primary-color); }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Trust Bar */
+        .trust-bar {
+            background-color: var(--primary-color);
+            padding: 30px 0;
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            color: #000;
+        }
+
+        .trust-item i {
+            font-size: 2rem;
+        }
+
+        .trust-item h4 {
+            font-size: 1.2rem;
+            margin: 0;
+            font-weight: 800;
+        }
+
+        /* Services */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .service-card {
+            background-color: var(--surface-color);
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: 8px;
+            border: 1px solid var(--surface-light);
+            transition: var(--transition);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .service-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Booking Form */
+        .booking-section {
+            background-color: var(--surface-color);
+            border-top: 1px solid var(--surface-light);
+            border-bottom: 1px solid var(--surface-light);
+        }
+
+        .booking-form {
+            background-color: var(--bg-color);
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            background-color: var(--surface-light);
+            border: 1px solid #444;
+            color: var(--text-main);
+            padding: 12px 15px;
+            border-radius: 4px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Testimonials */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .review-card {
+            background-color: var(--surface-color);
+            padding: 30px;
+            border-radius: 8px;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .stars {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .review-text {
+            font-style: italic;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .reviewer {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .reviewer-avatar {
+            width: 50px;
+            height: 50px;
+            background-color: var(--surface-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        /* FAQ Accordion */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background-color: var(--surface-color);
+            margin-bottom: 15px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .faq-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .faq-header:hover {
+            color: var(--primary-color);
+        }
+
+        .faq-header i {
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-header i {
+            transform: rotate(180deg);
+            color: var(--primary-color);
+        }
+
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: var(--bg-color);
+        }
+
+        .faq-content p {
+            padding: 20px;
+            color: var(--text-muted);
+            border-top: 1px solid #222;
+        }
+
+        /* Estimator Section */
+        .estimator-section {
+            background-color: var(--bg-color);
+        }
+
+        .estimator-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .estimator-container .booking-form {
+            background-color: var(--surface-color);
+        }
+
+        .estimate-result {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: var(--surface-light);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            display: none;
+            box-shadow: 0 4px 15px rgba(255, 179, 0, 0.1);
+            font-style: italic;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #050505;
+            padding: 60px 0 20px;
+            border-top: 1px solid #222;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h3 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .footer-info li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+        }
+
+        .footer-info i {
+            color: var(--primary-color);
+            margin-top: 5px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+            padding-left: 5px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #222;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Sticky Bottom Bar */
+        .mobile-sticky-bar {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #111;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
+            border-top: 1px solid #333;
+        }
+
+        .mobile-sticky-bar .btn {
+            flex: 1;
+            border-radius: 0;
+            padding: 15px 0;
+            font-size: 1.1rem;
+        }
+
+        .mobile-sticky-bar .btn-outline {
+            border: none;
+            border-right: 1px solid #333;
+            color: var(--text-main);
+        }
+
+        /* AI Chat Widget */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+            font-family: var(--font-body);
+        }
+
+        .chat-toggle-btn {
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-family: var(--font-heading);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-toggle-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 179, 0, 0.5);
+        }
+
+        .chat-panel {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background-color: var(--surface-color);
+            border: 1px solid #333;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .chat-panel.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+
+        .chat-header {
+            background-color: var(--primary-color);
+            color: #000;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-heading);
+        }
+
+        .chat-header h4 {
+            margin: 0;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-close-btn {
+            background: none;
+            border: none;
+            color: #000;
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+        }
+
+        .chat-msg {
+            max-width: 85%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .chat-msg.user {
+            background-color: var(--primary-color);
+            color: #000;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .chat-msg.bot {
+            background-color: var(--surface-light);
+            color: var(--text-main);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border: 1px solid #333;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            background-color: var(--surface-color);
+            border-top: 1px solid #333;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background-color: var(--bg-color);
+            border: 1px solid #444;
+            color: var(--text-main);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .chat-send-btn {
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .chat-send-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Typing Indicator Animation */
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 5px 10px;
+            align-items: center;
+            height: 24px;
+        }
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background-color: var(--text-muted);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Responsive Modifications */
+        @media (max-width: 992px) {
+            .hero-title { font-size: 3.5rem; }
+            .trust-grid { grid-template-columns: repeat(2, 1fr); }
+            .phone-number { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            body { padding-bottom: 50px; }
+            .hero-title { font-size: 2.8rem; }
+            .hero-btns { flex-direction: column; }
+            .form-grid { grid-template-columns: 1fr; }
+            .trust-grid { grid-template-columns: 1fr; }
+            header .btn { display: none; }
+            
+            .mobile-sticky-bar { display: flex; }
+
+            .chat-widget {
+                bottom: 80px; 
+                right: 15px;
+            }
+            .chat-panel {
+                width: calc(100vw - 30px);
+                right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo"><i class="fa-solid fa-truck-fast"></i> Flash Towing PDX</a>
+            <div class="header-actions">
+                <a href="tel:9713268952" class="phone-number"><i class="fa-solid fa-phone"></i> (971) 326-8952</a>
+                <a href="#book" class="btn btn-primary">Book Now</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Portland's <span>Fastest</span><br>Towing Service</h1>
+                <p class="hero-subtitle">Reliable, professional, and rapid towing & roadside assistance in the Greater Portland area. We are available 24/7 for all your vehicle emergencies.</p>
+                <div class="hero-btns">
+                    <a href="tel:9713268952" class="btn btn-primary"><i class="fa-solid fa-phone-volume"></i> Call Now</a>
+                    <a href="#book" class="btn btn-outline"><i class="fa-solid fa-calendar-check"></i> Schedule a Tow</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Bar -->
+    <section class="trust-bar">
+        <div class="container trust-grid">
+            <div class="trust-item">
+                <i class="fa-solid fa-clock"></i>
+                <h4>24/7 Available</h4>
+            </div>
+            <div class="trust-item">
+                <i class="fa-solid fa-bolt"></i>
+                <h4>30-Min Response</h4>
+            </div>
+            <div class="trust-item">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h4>Licensed & Insured</h4>
+            </div>
+            <div class="trust-item">
+                <i class="fa-solid fa-tags"></i>
+                <h4>No Hidden Fees</h4>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section-padding">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <i class="fa-solid fa-car service-icon"></i>
+                    <h3>Local Towing</h3>
+                    <p>Fast and safe towing for cars, SUVs, and light trucks anywhere in the Portland metro.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-map-location-dot service-icon"></i>
+                    <h3>Long-Distance</h3>
+                    <p>Transporting your vehicle across Oregon or state lines securely and affordably.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-truck service-icon"></i>
+                    <h3>Heavy-Duty</h3>
+                    <p>Specialized equipment for semi-trucks, buses, RVs, and commercial heavy equipment.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-truck-pickup service-icon"></i>
+                    <h3>Medium-Duty</h3>
+                    <p>Perfect for delivery trucks, box trucks, and larger passenger vehicles.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-truck-medical service-icon"></i>
+                    <h3>Emergency Towing</h3>
+                    <p>Accident recovery and immediate dispatch 24 hours a day, 7 days a week.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-motorcycle service-icon"></i>
+                    <h3>Motorcycle Towing</h3>
+                    <p>Damage-free, specialized straps and beds designed specifically for motorcycles.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-car-battery service-icon"></i>
+                    <h3>Jump Starts</h3>
+                    <p>Dead battery? We'll get you running again in minutes with high-output jump packs.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-gas-pump service-icon"></i>
+                    <h3>Fuel Delivery</h3>
+                    <p>Stranded on empty? We'll deliver enough gas or diesel to get you to the nearest station.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-wrench service-icon"></i>
+                    <h3>Tire Change</h3>
+                    <p>Quick flat tire changes and spare installations right on the side of the road.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-key service-icon"></i>
+                    <h3>Lockout Service</h3>
+                    <p>Keys locked inside? Our technicians can open your vehicle without damage.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-anchor service-icon"></i>
+                    <h3>Winch Out</h3>
+                    <p>Stuck in the mud, snow, or a ditch? We have the power to pull you safely back to the road.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fa-solid fa-car-burst service-icon"></i>
+                    <h3>Junk Cars</h3>
+                    <p>We remove unwanted, wrecked, or abandoned vehicles from your property.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="book" class="section-padding booking-section">
+        <div class="container">
+            <h2 class="section-title">Schedule A Tow Online</h2>
+            <form class="booking-form" onsubmit="event.preventDefault(); alert('Request sent! We will contact you shortly.');">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" placeholder="(971) 326-8952" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Pickup Location</label>
+                        <input type="text" class="form-control" placeholder="123 Main St, Portland OR" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Drop-off Location</label>
+                        <input type="text" class="form-control" placeholder="Destination address or shop name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Service Type</label>
+                        <select class="form-control" required>
+                            <option value="">Select a service...</option>
+                            <option value="local">Local Towing</option>
+                            <option value="heavy">Heavy-Duty Towing</option>
+                            <option value="roadside">Roadside Assistance (Jump/Tire/Fuel)</option>
+                            <option value="lockout">Lockout Service</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date & Time</label>
+                        <input type="datetime-local" class="form-control" required>
+                    </div>
+                    <div class="form-group full-width" style="margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Request</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="reviews" class="section-padding">
+        <div class="container">
+            <h2 class="section-title">What Portland Says</h2>
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="stars">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="review-text">"Incredible service! I was stranded on I-84 at 2 AM and Flash Towing PDX was there in 20 minutes. The driver was professional and got my car home safely."</p>
+                    <div class="reviewer">
+                        <div class="reviewer-avatar">JD</div>
+                        <div>
+                            <h4>John D.</h4>
+                            <small>Local Guide</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="stars">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="review-text">"Fair pricing and very quick response. Highly recommend them for jump starts and lockouts. Didn't try to overcharge me like other places. Truly reliable."</p>
+                    <div class="reviewer">
+                        <div class="reviewer-avatar">SM</div>
+                        <div>
+                            <h4>Sarah M.</h4>
+                            <small>Portland, OR</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="stars">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="review-text">"Used them to tow my heavy-duty work truck. They had the right equipment and handled it with extreme care. Portland's best towing company by far!"</p>
+                    <div class="reviewer">
+                        <div class="reviewer-avatar">MT</div>
+                        <div>
+                            <h4>Michael T.</h4>
+                            <small>Small Business Owner</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section-padding" style="background-color: var(--surface-light);">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-header">
+                        How fast can you arrive? <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-content">
+                        <p>Our average response time in the Portland Metro area is under 30 minutes. Factors like heavy traffic or severe weather may affect this, but our dispatch team will give you an accurate ETA when you call.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-header">
+                        Do you tow heavy-duty vehicles? <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-content">
+                        <p>Yes, we have a specialized fleet of heavy-duty wreckers equipped to handle semi-trucks, RVs, buses, and commercial heavy equipment safely and efficiently.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-header">
+                        What areas do you serve? <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-content">
+                        <p>We proudly serve the entire Greater Portland area, including Gresham, Beaverton, Hillsboro, Tigard, Clackamas, and surrounding regions. We also offer long-distance towing statewide.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-header">
+                        Are there any hidden fees? <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-content">
+                        <p>Absolutely not. We pride ourselves on transparent, flat-rate pricing. You will be provided a clear quote before we dispatch a driver, ensuring no surprises.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-header">
+                        Do you provide roadside assistance besides towing? <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-content">
+                        <p>Yes! We offer a full suite of roadside services including battery jump starts, flat tire changes, fuel delivery, vehicle lockouts, and winch-outs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Junk Car Value Estimator -->
+    <section id="estimator" class="section-padding estimator-section">
+        <div class="container">
+            <h2 class="section-title">Junk Car Value Estimator</h2>
+            <div class="estimator-container">
+                <p style="text-align: center; margin-bottom: 30px; color: var(--text-muted);">Find out how much cash you can get for your unwanted vehicle right now.</p>
+                <form id="estimatorForm" class="booking-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Year</label>
+                            <select id="estYear" class="form-control" required>
+                                <option value="">Select Year...</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Make</label>
+                            <input type="text" id="estMake" class="form-control" placeholder="e.g. Honda" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Model</label>
+                            <input type="text" id="estModel" class="form-control" placeholder="e.g. Civic" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Condition</label>
+                            <select id="estCondition" class="form-control" required>
+                                <option value="">Select Condition...</option>
+                                <option value="Running">Running</option>
+                                <option value="Not Running">Not Running</option>
+                                <option value="Parts Only">Parts Only</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width" style="margin-top: 20px;">
+                            <button type="submit" id="estSubmitBtn" class="btn btn-primary" style="width: 100%;">
+                                <i class="fa-solid fa-money-bill-wave"></i> Get My Estimate
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div id="estimateResult" class="estimate-result"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="#" class="logo" style="margin-bottom: 20px;"><i class="fa-solid fa-truck-fast"></i> Flash Towing</a>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">Portland's most reliable and fastest towing and roadside assistance company. Available day or night.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-info">
+                        <li><i class="fa-solid fa-location-dot"></i> <span>16531 NE Sandy Blvd Suite E<br>Portland, OR 97230</span></li>
+                        <li><i class="fa-solid fa-phone"></i> <span>(971) 326-8952</span></li>
+                        <li><i class="fa-solid fa-clock"></i> <span>Open 24/7 / 365 Days</span></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#services">Our Services</a></li>
+                        <li><a href="#book">Book a Tow</a></li>
+                        <li><a href="#estimator">Junk Car Estimator</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 Flash Towing PDX. All Rights Reserved. Licensed & Insured.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Sticky Bar -->
+    <div class="mobile-sticky-bar">
+        <a href="#book" class="btn btn-outline"><i class="fa-solid fa-calendar-check"></i> Book Online</a>
+        <a href="tel:9713268952" class="btn btn-primary"><i class="fa-solid fa-phone"></i> Call Now</a>
+    </div>
+
+    <!-- AI Chat Widget -->
+    <div class="chat-widget">
+        <button id="chatToggle" class="chat-toggle-btn">
+            <i class="fa-solid fa-comment-dots"></i> Need Help?
+        </button>
+        
+        <div id="chatPanel" class="chat-panel">
+            <div class="chat-header">
+                <h4><i class="fa-solid fa-robot"></i> Flash AI</h4>
+                <button id="closeChat" class="chat-close-btn">&times;</button>
+            </div>
+            <div id="chatMessages" class="chat-messages">
+                <!-- Chat messages will be injected here -->
+                <div class="chat-msg bot">
+                    Hello! I'm Flash, your virtual assistant for Flash Towing PDX. Are you stuck or do you need to schedule a tow?
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Type your message..." autocomplete="off">
+                <button id="sendChat" class="chat-send-btn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // REPLACE WITH YOUR ACTUAL API KEY
+        const GEMINI_API_KEY = "[PASTE YOUR KEY HERE]"; 
+
+        // --- FAQ Accordion Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqHeaders = document.querySelectorAll('.faq-header');
+            faqHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const item = header.parentElement;
+                    const content = header.nextElementSibling;
+                    const isActive = item.classList.contains('active');
+
+                    document.querySelectorAll('.faq-item').forEach(faqItem => {
+                        faqItem.classList.remove('active');
+                        faqItem.querySelector('.faq-content').style.maxHeight = null;
+                    });
+
+                    if (!isActive) {
+                        item.classList.add('active');
+                        content.style.maxHeight = content.scrollHeight + "px";
+                    }
+                });
+            });
+
+            // Populate Estimator Years (1990 - 2024)
+            const yearSelect = document.getElementById('estYear');
+            for (let y = 2024; y >= 1990; y--) {
+                let opt = document.createElement('option');
+                opt.value = y;
+                opt.innerHTML = y;
+                yearSelect.appendChild(opt);
+            }
+        });
+
+        // --- Junk Car Value Estimator (Streaming AI Logic) ---
+        const estimatorForm = document.getElementById('estimatorForm');
+        const estSubmitBtn = document.getElementById('estSubmitBtn');
+        const estimateResult = document.getElementById('estimateResult');
+
+        estimatorForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (GEMINI_API_KEY === "[PASTE YOUR KEY HERE]") {
+                estimateResult.style.display = 'block';
+                estimateResult.innerHTML = "<em>System Note: Please replace [PASTE YOUR KEY HERE] with your actual Gemini API key in the HTML code.</em>";
+                return;
+            }
+
+            const year = document.getElementById('estYear').value;
+            const make = document.getElementById('estMake').value;
+            const model = document.getElementById('estModel').value;
+            const condition = document.getElementById('estCondition').value;
+
+            // Prepare UI for streaming
+            estSubmitBtn.disabled = true;
+            estSubmitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Calculating...';
+            estimateResult.style.display = 'block';
+            estimateResult.innerHTML = '';
+
+            const promptText = `You are a junk car valuation expert for Flash Towing PDX in Portland, OR. A user wants to sell their ${year} ${make} ${model} in "${condition}" condition. Reply in EXACTLY two sentences. Sentence 1: Give a realistic estimated price range for its scrap/junk cash value in Portland. Sentence 2: Tell them to call (971) 326-8952 right now to schedule a pickup.`;
+
+            const payload = {
+                contents: [{ parts:[{ text: promptText }] }]
+            };
+
+            try {
+                // Fetch using SSE stream endpoint
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error("Network issue during streaming.");
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                let done = false;
+
+                // Read the stream chunk by chunk
+                while (!done) {
+                    const { value, done: readerDone } = await reader.read();
+                    done = readerDone;
+                    
+                    if (value) {
+                        const chunkStr = decoder.decode(value, { stream: true });
+                        const lines = chunkStr.split('\n');
+                        
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const dataStr = line.substring(6).trim();
+                                if (dataStr && dataStr !== '[DONE]') {
+                                    try {
+                                        const parsed = JSON.parse(dataStr);
+                                        const textPart = parsed.candidates[0].content.parts[0].text;
+                                        if (textPart) {
+                                            estimateResult.innerHTML += textPart; // append text as it streams in
+                                        }
+                                    } catch (err) {
+                                        // Ignore incomplete JSON parses in stream boundaries
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Estimator Error:", error);
+                estimateResult.innerHTML = "Sorry, we are unable to calculate an estimate at this moment. Please call (971) 326-8952 for immediate assistance.";
+            } finally {
+                estSubmitBtn.disabled = false;
+                estSubmitBtn.innerHTML = '<i class="fa-solid fa-money-bill-wave"></i> Get My Estimate';
+            }
+        });
+
+
+        // --- AI Chat Widget Logic ---
+        const SYSTEM_INSTRUCTION = "You are Flash, an AI assistant for Flash Towing PDX in Portland Oregon. Answer towing questions, give ETA estimates, and encourage callers to call (971) 326-8952 for emergencies.";
+
+        const chatToggle = document.getElementById('chatToggle');
+        const chatPanel = document.getElementById('chatPanel');
+        const closeChat = document.getElementById('closeChat');
+        const chatInput = document.getElementById('chatInput');
+        const sendChat = document.getElementById('sendChat');
+        const chatMessages = document.getElementById('chatMessages');
+
+        let conversationHistory =[];
+
+        chatToggle.addEventListener('click', () => {
+            chatPanel.classList.add('active');
+            chatInput.focus();
+        });
+
+        closeChat.addEventListener('click', () => {
+            chatPanel.classList.remove('active');
+        });
+
+        sendChat.addEventListener('click', handleSendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSendMessage();
+        });
+
+        async function handleSendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            addMessageToUI(text, 'user');
+            chatInput.value = '';
+            
+            conversationHistory.push({
+                role: "user",
+                parts: [{ text: text }]
+            });
+
+            const typingIndicatorId = showTypingIndicator();
+
+            try {
+                const responseText = await fetchGeminiResponse();
+                
+                conversationHistory.push({
+                    role: "model",
+                    parts: [{ text: responseText }]
+                });
+
+                removeElementById(typingIndicatorId);
+                addMessageToUI(responseText, 'bot');
+
+            } catch (error) {
+                console.error("Chat API Error:", error);
+                removeElementById(typingIndicatorId);
+                addMessageToUI("Sorry, I'm having trouble connecting right now. Please call us directly at (971) 326-8952.", 'bot');
+            }
+        }
+
+        function addMessageToUI(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('chat-msg', sender);
+            msgDiv.textContent = text; 
+            chatMessages.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            const id = 'typing-' + Date.now();
+            const typingDiv = document.createElement('div');
+            typingDiv.id = id;
+            typingDiv.classList.add('chat-msg', 'bot');
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            scrollToBottom();
+            return id;
+        }
+
+        function removeElementById(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function fetchGeminiResponse() {
+            if (GEMINI_API_KEY === "[PASTE YOUR KEY HERE]") {
+                return "System Note: Please replace[PASTE YOUR KEY HERE] with your actual Gemini API key in the HTML file.";
+            }
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            
+            const payload = {
+                system_instruction: {
+                    parts: [{ text: SYSTEM_INSTRUCTION }]
+                },
+                contents: conversationHistory
+            };
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+
+            const data = await response.json();
+            
+            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
+                return data.candidates[0].content.parts[0].text;
+            } else {
+                throw new Error("Invalid response format from Gemini API");
+            }
+        }
+    </script>
+</body>
+</html>
