@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash For Junk Cars | Flash Towing PDX</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-header { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=1600&q=80') center/cover; padding: 150px 0 80px; text-align: center; }
+        .page-header h1 { font-size: 4rem; color: var(--primary-color); margin-bottom: 20px; }
+        
+        /* Freds Auto Removal Integrated Form */
+        .estimator-wrap { display: flex; flex-wrap: wrap; gap: 40px; margin-top: -40px; }
+        .estimator-info { flex: 1; min-width: 300px; padding-top: 40px; }
+        .form-card { flex: 1; min-width: 350px; background: var(--surface-color); padding: 40px; border-radius: 12px; border: 1px solid var(--primary-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; position: relative; }
+        
+        .fw { margin-bottom: 15px; }
+        .finp, .fsel, .ftextarea { width: 100%; padding: 12px 15px; background: var(--surface-light); border: 1px solid #444; color: #fff; border-radius: 6px; font-family: var(--font-body); }
+        .finp:focus, .fsel:focus { border-color: var(--primary-color); outline: none; }
+        .ftextarea { min-height: 80px; resize: vertical; }
+        .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .step-label { color: var(--primary-color); font-weight: 700; margin-bottom: 10px; font-family: var(--font-heading); font-size: 1.2rem; }
+        
+        .photo-drop-zone { border: 2px dashed #444; text-align: center; padding: 20px; border-radius: 8px; cursor: pointer; color: var(--text-muted); transition: var(--transition); }
+        .photo-drop-zone:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        
+        .err-msg { color: #e8342a; font-size: 0.8rem; display: none; margin-top: 5px; }
+        .err-msg.show { display: block; }
+
+        .instant-offer-banner { background: #111; border: 1px dashed var(--primary-color); padding: 20px; text-align: center; border-radius: 8px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-container">
+            <a href="index.html" class="logo"><i class="fa-solid fa-truck-fast"></i> Flash Towing</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="areas.html">Areas We Serve</a>
+                <a href="junk-cars.html">Junk Cars</a>
+                <a href="blog.html">Blog</a>
+            </div>
+            <div class="header-actions"><a href="tel:9713268952" class="phone-number"><i class="fa-solid fa-phone"></i> (971) 326-8952</a></div>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>Cash For Junk Cars</h1>
+            <p style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">Get top dollar for your unwanted vehicle. Running or not, we pay cash on the spot with free same-day towing.</p>
+        </div>
+    </div>
+
+    <section class="section-padding" style="background: var(--bg-color);">
+        <div class="container">
+            <div class="estimator-wrap">
+                <div class="estimator-info">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Fast, Easy & Profitable</h2>
+                    <ul style="font-size: 1.1rem; line-height: 2; margin-bottom: 30px;">
+                        <li><i class="fa-solid fa-check" style="color:var(--primary-color);"></i> We buy cars, trucks, vans, and SUVs</li>
+                        <li><i class="fa-solid fa-check" style="color:var(--primary-color);"></i> Free towing from your driveway</li>
+                        <li><i class="fa-solid fa-check" style="color:var(--primary-color);"></i> We handle all DMV title paperwork</li>
+                        <li><i class="fa-solid fa-check" style="color:var(--primary-color);"></i> Paid instantly in cash</li>
+                    </ul>
+
+                    <div class="instant-offer-banner">
+                        <h3>Looking for an instant quote?</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 15px;">Check out our dedicated auto removal partner site.</p>
+                        <a href="https://www.fredsautoremoval.com" target="_blank" class="btn btn-outline" style="width: 100%;">Visit Fred's Auto Removal</a>
+                    </div>
+                </div>
+
+                <!-- Fred's Auto Removal Form Structure Translated to Dark Theme -->
+                <div class="form-card" id="form-view">
+                    <h3 style="margin-bottom: 20px; font-size: 1.8rem; text-align: center;">Get Your Free Offer</h3>
+                    
+                    <div class="step-label">1. Vehicle Info</div>
+                    <div class="row2 fw">
+                        <select class="fsel" id="year"><option value="">Year</option></select>
+                        <select class="fsel" id="make"><option value="">Make</option></select>
+                    </div>
+                    <div class="row2 fw">
+                        <select class="fsel" id="model"><option value="">Model</option></select>
+                        <select class="fsel" id="trim"><option value="">Trim</option></select>
+                    </div>
+
+                    <div class="step-label" style="margin-top: 20px;">2. Contact & Location</div>
+                    <div class="row2 fw">
+                        <div>
+                            <input type="text" class="finp" id="zip" placeholder="ZIP Code" maxlength="5">
+                            <div class="err-msg" id="zip-err">Invalid ZIP</div>
+                        </div>
+                        <div>
+                            <input type="tel" class="finp" id="phone" placeholder="Phone Number">
+                            <div class="err-msg" id="phone-err">Invalid phone</div>
+                        </div>
+                    </div>
+                    
+                    <div class="fw">
+                        <input type="email" class="finp" id="email" placeholder="Email Address">
+                    </div>
+                    
+                    <div class="fw">
+                        <textarea class="ftextarea" id="condition" placeholder="Vehicle Condition (Runs? Missing parts?)"></textarea>
+                    </div>
+
+                    <div class="fw">
+                        <div class="photo-drop-zone" onclick="document.getElementById('photo-input').click()">
+                            <i class="fa-solid fa-camera fa-2x" style="margin-bottom: 10px;"></i><br>
+                            Upload Vehicle Photos (Optional)
+                        </div>
+                        <input type="file" id="photo-input" accept="image/*" multiple style="display:none;">
+                    </div>
+
+                    <button class="btn btn-primary" id="submit-btn" style="width: 100%; margin-top: 15px;" onclick="submitForm()">Get My Cash Offer →</button>
+                </div>
+                
+                <div id="thankyou-view" style="display: none; flex: 1; text-align: center; padding: 40px; background: var(--surface-color); border-radius: 12px;">
+                    <i class="fa-solid fa-circle-check" style="font-size: 4rem; color: #4ade80; margin-bottom: 20px;"></i>
+                    <h2>Offer Requested!</h2>
+                    <p style="margin: 20px 0;">Ref ID: <strong id="ty-uid"></strong></p>
+                    <p>We are reviewing your vehicle details and will contact you shortly with your guaranteed cash offer.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Essential logic from the provided code -->
+    <script>
+        // 1. Populate Years
+        const yearSel = document.getElementById('year');
+        for (let y = new Date().getFullYear(); y >= 1990; y--) { yearSel.innerHTML += `<option value="${y}">${y}</option>`; }
+
+        // 2. Simplified Car Data for Demo (You can paste your entire carData object here)
+        const carData = {
+            'Honda': {'Civic':['LX','Sport','EX','Touring'], 'Accord':['LX','Sport','EX-L']},
+            'Toyota': {'Camry':['LE','SE','XSE'], 'Corolla':['LE','SE','XSE']},
+            'Ford': {'F-150':['XL','XLT','Lariat'], 'Mustang':['EcoBoost','GT']}
+        };
+
+        const makeSel = document.getElementById('make');
+        Object.keys(carData).sort().forEach(m => { makeSel.innerHTML += `<option value="${m}">${m}</option>`; });
+        
+        makeSel.addEventListener('change', function(){
+            const ms = document.getElementById('model'); ms.innerHTML = '<option value="">Model</option>';
+            if(this.value && carData[this.value]) Object.keys(carData[this.value]).forEach(m => ms.innerHTML += `<option value="${m}">${m}</option>`);
+        });
+
+        document.getElementById('model').addEventListener('change', function(){
+            const ts = document.getElementById('trim'); ts.innerHTML = '<option value="">Trim</option>';
+            const make = makeSel.value;
+            if(make && this.value && carData[make][this.value]) carData[make][this.value].forEach(t => ts.innerHTML += `<option value="${t}">${t}</option>`);
+        });
+
+        // 3. Form Submission Stub (Integrating the concept of the Fred's Auto Logic)
+        function generateUID() { return 'FAR-' + new Date().getFullYear() + '-' + Math.random().toString(36).substr(2, 6).toUpperCase(); }
+
+        async function submitForm() {
+            const btn = document.getElementById('submit-btn');
+            const zip = document.getElementById('zip').value;
+            const phone = document.getElementById('phone').value;
+            
+            if(zip.length < 5 || phone.length < 10) { alert("Please enter valid ZIP and Phone"); return; }
+            
+            btn.innerHTML = 'Processing...';
+            btn.disabled = true;
+
+            const uid = generateUID();
+            
+            // Here is where the CFG.TELEGRAM_BOT_TOKEN / Google Sheets fetch logic runs.
+            // Using setTimeout to simulate API network delay
+            setTimeout(() => {
+                document.getElementById('form-view').style.display = 'none';
+                document.getElementById('thankyou-view').style.display = 'block';
+                document.getElementById('ty-uid').textContent = uid;
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

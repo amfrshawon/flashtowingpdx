@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Areas We Serve | Flash Towing PDX</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-header { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1542223616-90e63edb2dce?q=80') center/cover; padding: 150px 0 80px; text-align: center; }
+        .page-header h1 { font-size: 4rem; color: var(--primary-color); }
+        .area-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        .city-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .city-item { background: var(--surface-color); padding: 15px; border-radius: 6px; border: 1px solid #333; transition: var(--transition); }
+        .city-item:hover { border-color: var(--primary-color); transform: translateX(5px); }
+        @media (max-width: 768px) { .area-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container nav-container">
+            <a href="index.html" class="logo"><i class="fa-solid fa-truck-fast"></i> Flash Towing</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="areas.html">Areas We Serve</a>
+                <a href="junk-cars.html">Junk Cars</a>
+                <a href="blog.html">Blog</a>
+            </div>
+            <div class="header-actions"><a href="tel:9713268952" class="phone-number"><i class="fa-solid fa-phone"></i> (971) 326-8952</a></div>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>Areas We Serve</h1>
+            <p>Fast dispatch 24/7 across the entire Greater Portland Metro Area.</p>
+        </div>
+    </div>
+
+    <section class="section-padding">
+        <div class="container area-grid">
+            <div>
+                <h2 style="font-size: 2.5rem; margin-bottom: 20px; color: var(--primary-color);">Covering Oregon & Washington</h2>
+                <p style="margin-bottom: 30px; font-size: 1.1rem; color: var(--text-muted);">Whether you're stranded downtown or on a rural highway, our fleet is positioned to reach you in 30 minutes or less. We also provide long-distance towing statewide.</p>
+                <div class="city-list">
+                    <div class="city-item"><i class="fa-solid fa-location-dot" style="color:var(--primary-color);"></i> Portland</div>
+                    <div class="city-item"><i class="fa-solid fa-location-dot" style="color:var(--primary-color);"></i> Beaverton</div>
+                    <div class="city-item"><i class="fa-solid fa-location-dot" style="color:var(--primary-color);"></i> Gresham</div>
+                    <div class="city-item"><i class="fa-solid fa-location-dot" style="color:var(--primary-color);"></i> Hillsboro</div>
+                    <div class="city-item"><i class="fa-solid fa-location-dot" style="color:var(--primary-color);"></i> Tigard</div>
+                    <div class="city-item"><i class="fa-solid fa-location-dot" style="color:var(--primary-color);"></i> Lake Oswego</div>
+                    <div class="city-item"><i class="fa-solid fa-location-dot" style="color:var(--primary-color);"></i> Milwaukie</div>
+                    <div class="city-item"><i class="fa-solid fa-location-dot" style="color:var(--primary-color);"></i> Vancouver, WA</div>
+                </div>
+            </div>
+            <div>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d178933.56996706!2d-122.83081!3d45.54728!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x54950b0b7da97427%3A0x1c36b9e6f6d18591!2sPortland%2C%20OR!5e0!3m2!1sen!2sus!4v1680000000000!5m2!1sen!2sus" width="100%" height="450" style="border:0; border-radius: 12px; filter: invert(90%) hue-rotate(180deg);" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
